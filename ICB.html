@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Integrated Care Boards Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+
+    <style>
+       #map {
+    height: 600px;
+    border: 4px solid #888; /* Dark grey border for a framed look */
+    border-radius: 10px; /* Slightly rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow effect */
+}
+
+
+        h1 {
+            font-family: Calibri, sans-serif;
+        }
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    right: 1.5%;
+    top: 15%;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px; /* Slightly rounded corners */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    width: 30%;  /* Use a percentage of the screen width */
+    max-width: 550px;  /* Prevent it from getting too wide */
+    min-width: 300px;  /* Prevent it from getting too small */
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+        .modal-header {
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-family: Calibri, sans-serif;
+        }
+        .modal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Calibri, sans-serif;
+        }
+        .modal-table th, .modal-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+ .modal-table th {
+    background-color: #2c3e50; /* Dark blue-grey header */
+    color: white;
+    text-align: left;
+    font-weight: bold;
+}
+.modal-table td {
+    background-color: #f8f9fa;
+    padding: 10px;
+    font-size: 12px;
+}
+
+.modal-table td a {
+    display: inline-block; 
+    text-decoration: none;
+    background-color: #3498db; 
+    color: white;
+    padding: 5px 8px; 
+    font-size: 12px; 
+    text-align: center;
+    border-radius: 4px;
+    transition: background 0.3s ease-in-out;
+    font-weight: bold;
+    width: 180px;
+    text-align: center;
+}
+
+
+.modal-table td a:hover {
+    background-color: #217dbb;
+}
+        .close {
+            cursor: pointer;
+            float: right;
+            font-size: 20px;
+            margin-top: -10px;
+        }
+		
+				   .toggle-button {
+        position: absolute;
+        top: 32px;
+        right: 10px;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px 15px;
+        font-size: 14px;
+        cursor: pointer;
+        z-index: 1000;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+		
+    </style>
+</head>
+<body>
+    <h1>Interweave Data Providers by Integrated Care Boards</h1>
+    <div id="map"></div>
+<button id="toggleMapStyle" class="toggle-button">Switch Map Style</button>
+    <!-- Modal for Table -->
+    <div id="modal" class="modal">
+        <span class="close" onclick="closeModal()">×</span>
+        <div id="modal-header" class="modal-header"></div>
+        <table id="modal-table" class="modal-table"></table>
+    </div>
+
+    <script>
+// Initialize map
+const map = L.map('map').setView([53.5, -0.6], 8);
+
+// Define the two tile layers
+const openStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>',
+    maxZoom: 18
+});
+
+const cartoDBLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
+});
+
+// Add the default tile layer (OpenStreetMap)
+let currentLayer = cartoDBLight.addTo(map);
+
+// Toggle Button Event Listener
+document.getElementById("toggleMapStyle").addEventListener("click", () => {
+    map.removeLayer(currentLayer); // Remove the current layer
+
+    if (currentLayer === openStreetMap) {
+        currentLayer = cartoDBLight;
+    } else {
+        currentLayer = openStreetMap;
+    }
+
+    map.addLayer(currentLayer); // Add the new layer
+});
+
+
+        // JSON data for NHS organisations
+        const nhsData = [
+    {
+        "name": "Airedale NHS Foundation Trust",
+        "region": "WY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "PractitionerRole",
+            "Organization",
+            "DocumentReference"
+        ]
+    },
+    {
+        "name": "Barnsley Hospital NHS Foundation Trust",
+        "region": "SY",
+        "resourcesProvided": [
+            "Encounter",
+            "Patient",
+            "Appointment",
+            "Organization",
+            "Practitioner",
+            "Location"
+        ]
+    },
+    {
+        "name": "Bradford Teaching Hospitals Foundation Trust",
+        "region": "WY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "PractitionerRole",
+            "Organization",
+            "DocumentReference",
+            "Encounter",
+            "DiagnosticReport"
+        ]
+    },
+    {
+        "name": "Calderdale and Huddersfield NHS Foundation Trust",
+        "region": "WY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "PractitionerRole",
+            "Organization",
+            "DocumentReference",
+            "Encounter",
+            "Location"
+        ]
+    },
+    {
+        "name": "Doncaster & Bassetlaw Teaching Hospitals Foundation Trust",
+        "region": "SY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "Organization",
+            "DocumentReference",
+            "Encounter",
+            "AllergyIntolerance",
+            "Appointment",
+            "Flag",
+            "MedicationRequest",
+            "Procedure",
+            "Condition",
+            "ReferralRequest"
+        ]
+    },
+    {
+        "name": "Harrogate and District NHS Foundation Trust",
+        "region": "HNY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "Organization",
+            "Encounter",
+            "Appointment",
+            "Location"
+        ]
+    },
+    {
+        "name": "Hull University Teaching Hospitals NHS Trust",
+        "region": "HNY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "PractitionerRole",
+            "Organization",
+            "Encounter",
+            "EpisodeOfCare",
+            "Appointment",
+            "Location"
+        ]
+    },
+    {
+        "name": "Humber Teaching NHS Foundation Trust",
+        "region": "HNY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "PractitionerRole",
+            "Organization",
+            "DocumentReference",
+            "Encounter",
+            "Observation",
+            "AllergyIntolerance",
+            "Procedure",
+            "Condition"
+        ]
+    },
+    {
+        "name": "Leeds Teaching Hospital Trust",
+        "region": "WY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "PractitionerRole",
+            "Organization",
+            "DocumentReference"
+        ]
+    },
+    {
+        "name": "Mid Yorkshire Teaching NHS Trust",
+        "region": "WY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "PractitionerRole",
+            "Organization",
+            "DocumentReference",
+            "Encounter",
+            "Appointment"
+        ]
+    },
+    {
+        "name": "North Lincolnshire Council",
+        "region": "HNY",
+        "resourcesProvided": [
+            "Patient"
+        ]
+    },
+    {
+        "name": "North Lincolnshire and Goole NHS Foundation Trust",
+        "region": "HNY",
+        "resourcesProvided": [
+            "Patient",
+            "DocumentReference",
+            "Encounter"
+        ]
+    },
+    {
+        "name": "North Yorkshire Council",
+        "region": "HNY",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "EpisodeOfCare",
+            "RelatedPerson",
+            "Task",
+            "ReferralRequest"
+        ]
+    },
+    {
+        "name": "Sheffield Children's NHS Foundation Trust",
+        "region": "SY",
+        "resourcesProvided": [
+            "Organization",
+            "Location",
+            "Patient",
+            "Appointment",
+            "Encounter",
+            "DocumentReference",
+            "Flag",
+            "AllergyIntolerance",
+            "ReferralRequest",
+            "Practitioner"
+        ]
+    },
+    {
+        "name": "Sheffield Teaching Hospitals NHS Foundation Trust",
+        "region": "SY",
+        "resourcesProvided": [
+            "Appointment",
+            "Encounter",
+            "Organization",
+            "Patient",
+            "Location"
+        ]
+    },
+    {
+        "name": "The Rotherham NHS Foundation Trust",
+        "region": "SY",
+        "resourcesProvided": [
+            "Encounter",
+            "Organization",
+            "Practitioner",
+            "Patient",
+            "Location",
+            "AllergyIntolerance",
+            "DocumentReference",
+            "Binary"
+        ]
+    },
+    {
+        "name": "York and Scarborough Teaching Hospital NHS Foundation Trust",
+        "region": "HNY",
+        "resourcesProvided": [
+            "Patient",
+            "Organization",
+            "DocumentReference"
+        ]
+    },
+	 {
+        "name": "Nottinghamshire County Council",
+        "region": "NCR",
+        "resourcesProvided": [
+            "Patient",
+            "Organization",
+            "EpisodeOfCare",
+			"ReferralRequest",
+			"Flag",
+			"Task"
+        ]
+    },
+	    {
+        "name": "Leicestershire County Council",
+        "region": "LLR",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "EpisodeOfCare"
+        ]
+    },
+    {
+        "name": "Leicester City Council",
+        "region": "LLR",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "EpisodeOfCare"
+        ]
+    },
+    {
+        "name": "Rutland County Councils",
+        "region": "LLR",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "EpisodeOfCare"
+        ]
+    },
+    {
+        "name": "Leicestershire Partnership NHS Trust",
+        "region": "LLR",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "PractitionerRole",
+            "Organization",
+            "DocumentReference",
+            "MedicationStatement",
+            "MedicationRequest",
+            "Binary",
+            "AllergyIntolerance"
+        ]
+    },
+    {
+        "name": "LPT Virtual Wards",
+        "region": "LLR",
+        "resourcesProvided": [
+            "Bundle",
+            "Encounter",
+            "EpisodeOfCare",
+            "Observation",
+            "Patient",
+            "QuestionnaireResponse",
+            "Organization"
+        ]
+    },
+    {
+        "name": "University Hospitals Leicester",
+        "region": "LLR",
+        "resourcesProvided": [
+            "Patient",
+            "Practitioner",
+            "PractitionerRole",
+            "Organization",
+            "Encounter",
+            "Appointment",
+            "DocumentReference",
+            "Binary",
+            "Location"
+        ]
+    },
+	
+	 {
+        "name": "University Hospitals of Derby and Burton NHS Foundation Trust",
+        "region": "DER",
+        "resourcesProvided": [
+            "Patient",
+            "DocumentReference"
+        ]
+    },
+	 {
+        "name": "Chesterfield Royal Hospital NHS Foundation Trust",
+        "region": "DER",
+        "resourcesProvided": [
+            "Patient",
+            "DocumentReference"
+        ]
+    }
+	
+	
+	
+];
+
+
+
+        // Map from ICB name to region code
+        const regionMapping = {
+            "NHS Humber and North Yorkshire Integrated Care Board": "HNY",
+            "NHS South Yorkshire Integrated Care Board": "SY",
+            "NHS West Yorkshire Integrated Care Board": "WY",
+            "NHS Derby and Derbyshire Integrated Care Board": "DER",
+            "NHS Leicester, Leicestershire and Rutland Integrated Care Board": "LLR",
+			"NHS Nottingham and Nottinghamshire Integrated Care Board": "NCR"
+        };
+
+        // Function to display modal with table
+function showModal(regionCode, regionName) {
+    const modal = document.getElementById("modal");
+    const modalHeader = document.getElementById("modal-header");
+    const modalTable = document.getElementById("modal-table");
+
+    // Set header
+    modalHeader.textContent = `${regionName}`;
+
+    // Build table
+    modalTable.innerHTML = `
+        <tr>
+            <th>Provider</th>
+            <th>Resources Available</th>
+        </tr>
+    `;
+
+    nhsData
+        .filter(org => org.region === regionCode)
+        .forEach(org => {
+            modalTable.innerHTML += `
+                <tr>
+                    <td>
+                        <a href="#" onclick="addProviderMarker('${org.name}')">${org.name}</a>
+                    </td>
+                    <td>${org.resourcesProvided.join(", ")}</td>
+                </tr>
+            `;
+        });
+
+    // Show modal
+    modal.style.display = "block";
+}
+
+// Track the current marker to remove it later
+let currentMarker = null;
+
+const markers = [
+    { id: "RCD", coords: [53.9937493,-1.517829], name: "Harrogate and District NHS Foundation Trust", color: "darkblue" },
+    { id: "RV9", coords: [53.7712215,-0.4466298], name: "Humber Teaching NHS Foundation Trust", color: "darkblue" },
+    { id: "RCB", coords: [53.970294,-1.0847009], name: "York and Scarborough Teaching Hospital NHS Foundation Trust", color: "darkblue" },
+	{ id: "215", coords: [53.750, -0.350], name: "Hull City Council", color: "darkblue" },
+	{ id: "217", coords: [53.550, -0.650], name: "North Lincolnshire Council", color: "darkblue" },
+	{ id: "T999", coords: [54.281,-1.624], name: "North Yorkshire Council", color: "darkblue" },
+	{ id: "RFX8TOC", coords: [53.500, -1.400], name: "Yorkshire Ambulance Service", color: "darkblue" },
+	{ id: "RWA", coords: [53.744191,-0.3588982], name: "Hull University Teaching Hospitals NHS Trust", color: "darkblue" },
+	{ id: "RJL1", coords: [53.587034,-0.667200], name: "North Lincolnshire and Goole NHS Foundation Trust", color: "darkblue" },
+	{ id: "511", coords: [52.9978026,-1.1411653], name: "Nottinghamshire County Council", color: "darkblue" },
+
+];
+
+
+
+function addProviderMarker(providerName) {
+    // Find the provider in the markers list
+    const provider = markers.find(marker => marker.name === providerName);
+
+    //if (!provider) {
+    //    alert("Provider location not found!");
+    //    return;
+    //}
+
+    // Remove existing marker if any
+    if (currentMarker) {
+        map.removeLayer(currentMarker);
+    }
+
+    // Create a new marker for the provider
+    currentMarker = L.marker(provider.coords, {
+        icon: L.AwesomeMarkers.icon({
+            icon: 'info-sign',
+            iconColor: 'white',
+            markerColor: provider.color,
+            prefix: 'glyphicon'
+        }),
+        title: provider.name
+    });
+
+    // Bind a tooltip
+    currentMarker.bindTooltip(provider.name, {
+        permanent: true,
+        direction: "right"
+    });
+
+    // Add the marker to the correct map
+    currentMarker.addTo(map);
+
+    // Pan the map to the new marker
+   map.setView([53.5, -0.6], 8);
+}
+
+
+
+        // Function to close modal
+        function closeModal() {
+    const modal = document.getElementById("modal");
+    modal.style.display = "none"; // Hide the modal
+
+    // Reset the map view
+    map.setView([53.5, -0.6], 8);
+
+    // Reset the last selected ICB to blue
+    if (lastSelectedICB) {
+        lastSelectedICB.setStyle({ color: "blue" });
+        lastSelectedICB = null;
+    }
+
+    // Remove any existing markers from the map
+    if (currentMarker) {
+        map.removeLayer(currentMarker);
+        currentMarker = null;
+    }
+}
+
+
+        // Fetch GeoJSON data from ArcGIS REST Service
+        const geojsonUrl = "https://yorkshire-and-humber-care-record.github.io/YHCRmap/filtered_ICBs.geojson";
+	    
+       // Store reference to the last selected ICB
+let lastSelectedICB = null;
+
+fetch(geojsonUrl)
+    .then(response => response.json())
+    .then(data => {
+        L.geoJSON(data, {
+            filter: feature => Object.keys(regionMapping).includes(feature.properties.ICB23NM),
+            style: { color: "blue", weight: 2 },
+            onEachFeature: (feature, layer) => {
+                const icbName = feature.properties.ICB23NM;
+                const regionCode = regionMapping[icbName]; 
+                const regionName = icbName;
+
+                // Add hover tooltip for all regions
+                layer.bindTooltip(regionName, { permanent: false, direction: "top" });
+
+                // Change color to green on hover
+                layer.on("mouseover", () => {
+                    layer.setStyle({ color: "green" });
+                });
+
+                // Reset to original color on mouseout (only if not selected)
+                layer.on("mouseout", () => {
+                    if (lastSelectedICB !== layer) {
+                        layer.setStyle({ color: "blue" });
+                    }
+                });
+
+                // Click event to highlight selected ICB
+                layer.on("click", () => {
+                    // Reset previous selected ICB to blue
+                    if (lastSelectedICB) {
+                        lastSelectedICB.setStyle({ color: "blue" });
+                    }
+
+                    // Highlight clicked ICB in red
+                    layer.setStyle({ color: "green" });
+                    lastSelectedICB = layer; // Store the clicked ICB
+
+                    // Open the modal
+                    if (regionCode) {
+                        showModal(regionCode, regionName);
+                    }
+                });
+            }
+        }).addTo(map);
+    })
+    .catch(error => console.error("Error loading GeoJSON:", error));
+
+    </script>
+</body>
+</html>
