@@ -144,7 +144,8 @@ document.getElementById("toggleMapStyle").addEventListener("click", () => {
 
     // Update button label
     const toggleButton = document.getElementById("toggleMapStyle");
-    toggleButton.textContent = isProduction ? "Live data" : "In Progress";
+	// previously: toggleButton.textContent = isProduction ? "Live data" : "In Progress";
+    toggleButton.textContent = isProduction ? "Toggle between Live and In Progress data" : "Toggle between Live and In Progress data";
 
     // Update header
     const header = document.getElementById("subheader");
