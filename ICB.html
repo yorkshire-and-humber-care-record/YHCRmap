@@ -108,7 +108,7 @@
 <body>
     <h1 id="subheader">Interweave Data Providers by Integrated Care Boards - Data in Production</h1>
     <div id="map"></div>
-<button id="toggleMapStyle" class="toggle-button">Toggle Production</button>
+<button id="toggleMapStyle" class="toggle-button">Toggle between Live and In Progress data</button>
 
     <!-- Modal for Table -->
     <div id="modal" class="modal">
@@ -144,7 +144,7 @@ document.getElementById("toggleMapStyle").addEventListener("click", () => {
 
     // Update button label
     const toggleButton = document.getElementById("toggleMapStyle");
-    toggleButton.textContent = isProduction ? "Production" : "In Progress";
+    toggleButton.textContent = isProduction ? "Live data" : "In Progress";
 
     // Update header
     const header = document.getElementById("subheader");
