@@ -106,9 +106,10 @@
     </style>
 </head>
 <body>
-    <h1>Interweave Data Providers by Integrated Care Boards</h1>
+    <h1 id="subheader">Interweave Data Providers by Integrated Care Boards - Data in Production</h1>
     <div id="map"></div>
-<button id="toggleMapStyle" class="toggle-button">Switch Map Style</button>
+<button id="toggleMapStyle" class="toggle-button">Toggle Production</button>
+
     <!-- Modal for Table -->
     <div id="modal" class="modal">
         <span class="close" onclick="closeModal()">×</span>
@@ -135,22 +136,32 @@ const cartoDBLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z
 // Add the default tile layer (OpenStreetMap)
 let currentLayer = cartoDBLight.addTo(map);
 
-// Toggle Button Event Listener
+let isProduction = true;
+
 document.getElementById("toggleMapStyle").addEventListener("click", () => {
-    map.removeLayer(currentLayer); // Remove the current layer
+    isProduction = !isProduction;
+    nhsData = isProduction ? nhsDataProduction : nhsDataInProgress;
 
-    if (currentLayer === openStreetMap) {
-        currentLayer = cartoDBLight;
-    } else {
-        currentLayer = openStreetMap;
+    // Update button label
+    const toggleButton = document.getElementById("toggleMapStyle");
+    toggleButton.textContent = isProduction ? "Production" : "In Progress";
+
+    // Update header
+    const header = document.getElementById("subheader");
+    header.textContent = `Interweave Data Providers by Integrated Care Boards - Data in ${isProduction ? "Production" : "Progress"}`;
+
+    // Refresh modal if it's open
+    const modal = document.getElementById("modal");
+    if (modal.style.display === "block" && lastSelectedICB) {
+        const icbName = lastSelectedICB.feature.properties.ICB23NM;
+        const regionCode = regionMapping[icbName];
+        showModal(regionCode, icbName);
     }
-
-    map.addLayer(currentLayer); // Add the new layer
 });
 
 
-        // JSON data for NHS organisations
-        const nhsData = [
+
+const nhsDataProduction = [
   {
         "name": "GP Connect - data from all practices",
         "region": "WY",
@@ -470,6 +481,93 @@ document.getElementById("toggleMapStyle").addEventListener("click", () => {
 	
 	
 ];
+const nhsDataInProgress = [
+  {
+    "name": "Bradford Teaching Hospitals Foundation Trust",
+    "region": "WY",
+    "resourcesProvided": ["Bundle", "Appointment", "Location"]
+  },
+  {
+    "name": "Doncaster & Bassetlaw Teaching Hospitals Foundation Trust",
+    "region": "SY",
+    "resourcesProvided": ["PractitionerRole", "DiagnosticReport"]
+  },
+  {
+    "name": "Harrogate and District NHS Foundation Trust",
+    "region": "HNY",
+    "resourcesProvided": ["AllergyIntolerance"]
+  },
+  {
+    "name": "Hull City Council",
+    "region": "HNY",
+    "resourcesProvided": [
+      "Patient", "RelatedPerson", "EpisodeOfCare", "Flag", "ReferralRequest", 
+      "Condition", "Task", "Organization"
+    ]
+  },
+  {
+    "name": "Hull University Teaching Hospitals NHS Trust",
+    "region": "HNY",
+    "resourcesProvided": [
+      "AllergyIntolerance", "Binary", "DocumentReference", "DiagnosticReport", 
+      "Observation", "Condition"
+    ]
+  },
+  {
+    "name": "Leeds Teaching Hospital Trust",
+    "region": "WY",
+    "resourcesProvided": [
+      "Encounter", "Observation", "AllergyIntolerance", "Flag", "ReferralRequest", 
+      "MedicationRequest", "HealthcareService", "Appointment", "Location"
+    ]
+  },
+  {
+    "name": "North Lincolnshire and Goole NHS Foundation Trust",
+    "region": "HNY",
+    "resourcesProvided": ["Practitioner", "PractitionerRole", "Organization"]
+  },
+  {
+    "name": "North Yorkshire Council",
+    "region": "HNY",
+    "resourcesProvided": ["PractitionerRole", "Organization", "Flag"]
+  },
+  {
+    "name": "Sheffield Children's NHS Foundation Trust",
+    "region": "SY",
+    "resourcesProvided": [
+      "DiagnosticReport", "MedicationRequest", "MedicationStatement", "Medication"
+    ]
+  },
+  {
+    "name": "Sheffield City Council",
+    "region": "SY",
+    "resourcesProvided": [
+      "Appointment", "EpisodeOfCare", "RelatedPerson", "Location", "Organization", 
+      "PractitionerRole", "Practitioner", "Patient"
+    ]
+  },
+  {
+    "name": "Sheffield Teaching Hospitals NHS Foundation Trust",
+    "region": "SY",
+    "resourcesProvided": ["DocumentReference"]
+  },
+  {
+    "name": "The Rotherham NHS Foundation Trust",
+    "region": "SY",
+    "resourcesProvided": ["Appointment", "MedicationRequest"]
+  },
+  {
+    "name": "York and Scarborough Teaching Hospital NHS Foundation Trust",
+    "region": "HNY",
+    "resourcesProvided": [
+      "Practitioner", "PractitionerRole", "Appointment", "Encounter", 
+      "AllergyIntolerance", "Observation", "DiagnosticReport", "Condition", "Location"
+    ]
+  }
+];
+
+let nhsData = nhsDataProduction; 
+
 
 
 
