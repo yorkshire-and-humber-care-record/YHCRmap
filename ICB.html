@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Integrated Care Boards Map</title>
+    <title>Data Providers Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
@@ -106,7 +106,7 @@
     </style>
 </head>
 <body>
-    <h1 id="subheader">Interweave Data Providers by Integrated Care Boards - Data in Production</h1>
+    <h1 id="subheader">Data Providers By Region - Data in Production</h1>
     <div id="map"></div>
 <button id="toggleMapStyle" class="toggle-button">Toggle between Live and In Progress data</button>
 
@@ -149,7 +149,7 @@ document.getElementById("toggleMapStyle").addEventListener("click", () => {
 
     // Update header
     const header = document.getElementById("subheader");
-    header.textContent = `Interweave Data Providers by Integrated Care Boards - Data in ${isProduction ? "Production" : "Progress"}`;
+    header.textContent = `Data Providers By Region - Data in ${isProduction ? "Production" : "Progress"}`;
 
     // Refresh modal if it's open
     const modal = document.getElementById("modal");
@@ -1277,6 +1277,7 @@ fetch(geojsonUrl)
     </script>
 </body>
 </html>
+
 
 
 
