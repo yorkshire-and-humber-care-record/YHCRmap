@@ -263,14 +263,15 @@ const nhsDataProduction = [
         "Allergy",
         "Appointment",
         "Condition",
-        /*"Diagnostic Report"*/
+        "Diagnostic Report",
         "Documents (Discharge Summary, Clinic Notes)",
         "Encounter IP/OP",
         "Flag",
+		"Location",
         "Medication Request",
         "Organization",
         "Practitioner",
-        /*"Practitioner Role"*/
+        "Practitioner Role",
         "Procedure",
         "Referral Request"
         ]
@@ -359,25 +360,33 @@ const nhsDataProduction = [
         "Procedure"
         ]
     },
-    /*{
+	{
+        "name": "Leeds Community Cardiac",
+        "region": "WY",
+        "resourcesProvided": [
+		"TPP HTML Feed"
+        ]
+  },
+    {
         "name": "Leeds Community Healthcare",
         "region": "WY",
         "resourcesProvided": [
-        "Alergy",
+        /*"Alergy",*/
         "Appointment",
         "Ecounter",
         "Episode of Care",
+		"Flag",
         "Location",
-        "Medication Statement",
-        "Observation",
+        /*"Medication Statement",
+        "Observation",*/
         "Organization",
-        "Practitioner",
-        "Practitioner Role",
-        "Referral Request",
-        "Related Person",
-        "Task"
+        /*"Practitioner",
+        "Practitioner Role",*/
+        "Referral Request"
+       /* "Related Person",	
+        "Task"*/
         ]
-    },*/
+    },
     {
         "name": "Leeds Teaching Hospital Trust",
         "region": "WY",
@@ -576,6 +585,13 @@ const nhsDataProduction = [
         "S1 Non GP HTML Feed"
         ]
     },
+	{
+        "name": "Rotherham Doncaster and South Humber NHS Foundation Trust",
+        "region": "SY",
+        "resourcesProvided": [
+		"TPP HTML Feed"
+        ]
+  },
     {
         "name": "Rutland County Council",
         "region": "LLR",
@@ -604,19 +620,16 @@ const nhsDataProduction = [
         "Referral Request",
         ]
     },
-    /*{
+    {
         "name": "Sheffield City Council",
         "region": "SY",
         "resourcesProvided": [
-        "Appointment",
+        "Episode of Care",
         "Location",
         "Organization",
-        "Practitioner",
-        "Practitioner Role",
-        "Related Person",
-        "Social Care Service"
+        "Practitioner"
         ]
-    },*/
+    },
     {
         "name": "Sheffield Teaching Hospitals NHS Foundation Trust",
         "region": "SY",
@@ -647,6 +660,13 @@ const nhsDataProduction = [
         /*"Task"*/
         ]
     },
+	{
+        "name": "South West Yorkshire Partnership Foundation Trust",
+        "region": "SY",
+        "resourcesProvided": [
+		"TPP HTML Feed"
+        ]
+  },
     /*{
         "name": "South Notts Transfer of Care Hub",
         "region": "NCR",
@@ -780,8 +800,7 @@ const nhsDataInProgress = [
         "name": "Doncaster & Bassetlaw Teaching Hospitals Foundation Trust",
         "region": "SY",
         "resourcesProvided": [
-        "Diagnostic Report",
-        "Practitioner Role"
+        "Related Person"
     ]
   },
   /*{
@@ -832,21 +851,21 @@ const nhsDataInProgress = [
         "Observation"
     ]
   },
+	/*{
+        "name": "Leeds Community Cardiac",
+        "region": "WY",
+        "resourcesProvided": [
+        ]
+  },*/
   {
         "name": "Leeds Community Healthcare",
         "region": "WY",
         "resourcesProvided": [
-        "Allergy", 
-        "Appointment",
-        "Encounter",
-        "Episode of Care",
-        "Location",
+        "Allergy",
         "Medication Request",
-        "Observation",
-        "Organization",
+        "Observation"
         "Practitioner",
         "Practitioner Role",
-        "Referral Request",
         "Related Person",
         "Task"
         ]
@@ -1013,9 +1032,6 @@ const nhsDataInProgress = [
         "region": "SY",
         "resourcesProvided": [
         "Appointment",
-        "Location",
-        "Organization",
-        "Practitioner",
         "Practitioner Role",
         "Related Person",
         "Social Care Service"
@@ -1086,7 +1102,7 @@ const nhsDataInProgress = [
         "name": "Yorkshire Ambulance Service - YAS",
         "region": "HNY",
         "resourcesProvided": [
-        /*"Composition",*/
+        "Composition",
         "Procedure"
     ]
   }
@@ -1279,6 +1295,7 @@ fetch(geojsonUrl)
     </script>
 </body>
 </html>
+
 
 
 
