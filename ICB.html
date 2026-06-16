@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Integrated Care Boards Map</title>
+    <title>Data Providers Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
@@ -33,7 +33,7 @@
     width: 30%;  /* Use a percentage of the screen width */
     max-width: 550px;  /* Prevent it from getting too wide */
     min-width: 300px;  /* Prevent it from getting too small */
-    max-height: 100%;
+    max-height: 80vh; /* Replaced max-height: 100%; so to allow for scrollbars on the modal */
     overflow-y: auto;
 }
 
@@ -106,7 +106,7 @@
     </style>
 </head>
 <body>
-    <h1 id="subheader">Interweave Data Providers by Integrated Care Boards - Data in Production</h1>
+    <h1 id="subheader">Data Providers By Region - Data in Production</h1>
     <div id="map"></div>
 <button id="toggleMapStyle" class="toggle-button">Toggle between Live and In Progress data</button>
 
@@ -149,7 +149,7 @@ document.getElementById("toggleMapStyle").addEventListener("click", () => {
 
     // Update header
     const header = document.getElementById("subheader");
-    header.textContent = `Interweave Data Providers by Integrated Care Boards - Data in ${isProduction ? "Production" : "Progress"}`;
+    header.textContent = `Data Providers By Region - Data in ${isProduction ? "Production" : "Progress"}`;
 
     // Refresh modal if it's open
     const modal = document.getElementById("modal");
@@ -198,7 +198,7 @@ const nhsDataProduction = [
         "Appointment",    
         "Encounter IP & OP",
         "Location",
-        /*"Medication Request"*/
+        "Medication Request",
         "Organization",
         "Practitioner"  
         ]
@@ -263,14 +263,15 @@ const nhsDataProduction = [
         "Allergy",
         "Appointment",
         "Condition",
-        /*"Diagnostic Report"*/
+        "Diagnostic Report",
         "Documents (Discharge Summary, Clinic Notes)",
         "Encounter IP/OP",
         "Flag",
+		"Location",
         "Medication Request",
         "Organization",
         "Practitioner",
-        /*"Practitioner Role"*/
+        "Practitioner Role",
         "Procedure",
         "Referral Request"
         ]
@@ -359,43 +360,51 @@ const nhsDataProduction = [
         "Procedure"
         ]
     },
-    /*{
+	{
+        "name": "Leeds Community Cardiac",
+        "region": "WY",
+        "resourcesProvided": [
+		"TPP HTML Feed"
+        ]
+  },
+    {
         "name": "Leeds Community Healthcare",
         "region": "WY",
         "resourcesProvided": [
-        "Alergy",
+        /*"Alergy",*/
         "Appointment",
         "Ecounter",
         "Episode of Care",
+		"Flag",
         "Location",
-        "Medication Statement",
-        "Observation",
+        /*"Medication Statement",
+        "Observation",*/
         "Organization",
-        "Practitioner",
-        "Practitioner Role",
-        "Referral Request",
-        "Related Person",
-        "Task"
+        /*"Practitioner",
+        "Practitioner Role",*/
+        "Referral Request"
+       /* "Related Person",	
+        "Task"*/
         ]
-    },*/
+    },
     {
         "name": "Leeds Teaching Hospital Trust",
         "region": "WY",
         "resourcesProvided": [
-        /*"Alergy",
+        /*"Alergy",*/
         "Appointment",
-        "Condition"*/
+        /*"Condition"*/
         "Documents (Discharge Summary, Maternity)",
-        /*"Ecounter",
-        "Episode of Care",
-        "Flag",
+        "Ecounter",
+        /*"Episode of Care",
+        "Flag",*/
         "Location",
-        "Medication Request",
+        /*"Medication Request",
         "Observation",*/
         "Organization",
         "Practitioner",
-        "Practitioner Role"
-        /*"Referral Request"*/
+        "Practitioner Role",
+        "Referral Request"
         ]
     },
     {
@@ -572,9 +581,29 @@ const nhsDataProduction = [
         "Location",
         "Organization",
         "Practitioner",
-        "Referral Request"
+        "Referral Request",
+        "S1 Non GP HTML Feed"
         ]
     },
+	{
+        "name": "Rotherham Doncaster and South Humber NHS Foundation Trust",
+        "region": "SY",
+        "resourcesProvided": [
+		"TPP HTML Feed"
+        ]
+  },
+  {
+        "name": "Rotherham Metropolitan Borough Council",
+        "region": "SY",
+        "resourcesProvided": [
+		"EpisodeOfCare",
+        "Location",
+        "Organization",
+        "Patient",
+        "Practitioner",
+        "PractitionerRole"
+        ]
+  },
     {
         "name": "Rutland County Council",
         "region": "LLR",
@@ -590,7 +619,7 @@ const nhsDataProduction = [
         "resourcesProvided": [
         "Allergy",
         "Appointment",
-        /*"Diagnostic Report",*/
+        "Diagnostic Report",
         "Documents (Discharge Summary, Clinical Notes)",
         "Encounter",
         "Flag",
@@ -600,22 +629,19 @@ const nhsDataProduction = [
         "Organization",
         "Practitioner",
         /*"Procedure",*/
-        "Referral Request",
+        "Referral Request"
         ]
     },
-    /*{
+    {
         "name": "Sheffield City Council",
         "region": "SY",
         "resourcesProvided": [
-        "Appointment",
+        "Episode of Care",
         "Location",
         "Organization",
-        "Practitioner",
-        "Practitioner Role",
-        "Related Person",
-        "Social Care Service"
+        "Practitioner"
         ]
-    },*/
+    },
     {
         "name": "Sheffield Teaching Hospitals NHS Foundation Trust",
         "region": "SY",
@@ -636,7 +662,7 @@ const nhsDataProduction = [
         "Condition",*/
         "Diagnostic Report",
         "Documents (Discharge Summary, Correspondance & Letters, Radiology Results, Transfer of Care for ED Arrivals)",
-        "Encounter",
+        /*"Encounter",*/
         "Flag",
         "Location",
         /*"Observation",*/
@@ -646,6 +672,13 @@ const nhsDataProduction = [
         /*"Task"*/
         ]
     },
+	{
+        "name": "South West Yorkshire Partnership Foundation Trust",
+        "region": "SY",
+        "resourcesProvided": [
+		"TPP HTML Feed"
+        ]
+  },
     /*{
         "name": "South Notts Transfer of Care Hub",
         "region": "NCR",
@@ -667,10 +700,11 @@ const nhsDataProduction = [
         "Allergy",
         "Appointment",
         /*"Binary"*/,
+		"Diagnostic Reports",
         "Documents (Discharge Summary)",
         "Encounter",
         "Location",
-        /*"Medication Request",*/
+        "Medication Request",
         "Organization",
         "Practitioner"
         ]
@@ -743,7 +777,7 @@ const nhsDataInProgress = [
         "name": "Barnsley Hospital NHS Foundation Trust",
         "region": "SY",
         "resourcesProvided": [
-        "Medication Request" 
+        /*"Medication Request"*/
         ]
     },
     {
@@ -778,8 +812,7 @@ const nhsDataInProgress = [
         "name": "Doncaster & Bassetlaw Teaching Hospitals Foundation Trust",
         "region": "SY",
         "resourcesProvided": [
-        "Diagnostic Report",
-        "Practitioner Role"
+        "Related Person"
     ]
   },
   /*{
@@ -830,21 +863,21 @@ const nhsDataInProgress = [
         "Observation"
     ]
   },
+	/*{
+        "name": "Leeds Community Cardiac",
+        "region": "WY",
+        "resourcesProvided": [
+        ]
+  },*/
   {
         "name": "Leeds Community Healthcare",
         "region": "WY",
         "resourcesProvided": [
-        "Allergy", 
-        "Appointment",
-        "Encounter",
-        "Episode of Care",
-        "Location",
+        "Allergy",
         "Medication Request",
         "Observation",
-        "Organization",
         "Practitioner",
         "Practitioner Role",
-        "Referral Request",
         "Related Person",
         "Task"
         ]
@@ -853,17 +886,13 @@ const nhsDataInProgress = [
         "name": "Leeds Teaching Hospital Trust",
         "region": "WY",
         "resourcesProvided": [
-        "Allergy", 
-        "Appointment",
-        "Condition",
-        "Encounter",
+        "Allergy",
+		"Condition",
         "Episode of Care",
         "Flag",
         /*"Healthcare Service",*/
-        "Location",
         "Medication Request",
-        "Observation", 
-        "Referral Request"
+        "Observation"
     ]
   },
   {
@@ -1005,7 +1034,6 @@ const nhsDataInProgress = [
         "name": "Sheffield Children's NHS Foundation Trust",
         "region": "SY",
         "resourcesProvided": [
-        "Diagnostic Report",
         "Medication Request",
         "Medication Statement",
         "Procedure"
@@ -1016,9 +1044,6 @@ const nhsDataInProgress = [
         "region": "SY",
         "resourcesProvided": [
         "Appointment",
-        "Location",
-        "Organization",
-        "Practitioner",
         "Practitioner Role",
         "Related Person",
         "Social Care Service"
@@ -1037,6 +1062,7 @@ const nhsDataInProgress = [
         "resourcesProvided": [
         "Care Plan",
         "Condition",
+		"Encounter",
         "Observation",
         "Task"
     
@@ -1060,7 +1086,7 @@ const nhsDataInProgress = [
         "name": "The Rotherham NHS Foundation Trust",
         "region": "SY",
         "resourcesProvided": [
-        "Medication Request"
+        /*"Medication Request"*/
     ]
   },
   /*{
@@ -1088,7 +1114,7 @@ const nhsDataInProgress = [
         "name": "Yorkshire Ambulance Service - YAS",
         "region": "HNY",
         "resourcesProvided": [
-        /*"Composition",*/
+        "Composition",
         "Procedure"
     ]
   }
@@ -1106,7 +1132,8 @@ let nhsData = nhsDataProduction;
             "NHS West Yorkshire Integrated Care Board": "WY",
             "NHS Derby and Derbyshire Integrated Care Board": "DER",
             "NHS Leicester, Leicestershire and Rutland Integrated Care Board": "LLR",
-			"NHS Nottingham and Nottinghamshire Integrated Care Board": "NCR"
+			"NHS Nottingham and Nottinghamshire Integrated Care Board": "NCR",
+			"NHS Dorset Integrated Care Board": "DCR"
         };
 
         // Function to display modal with table
@@ -1280,3 +1307,16 @@ fetch(geojsonUrl)
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
