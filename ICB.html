@@ -203,19 +203,21 @@ const nhsDataProduction = [
         "Practitioner"  
         ]
     },
-    /*{
+    {
         "name": "Barnsley Metropolitan Borough Council",
         "region": "SY",
         "resourcesProvided": [
-        "Appointment",    
+        /*"Appointment",*/ 
         "Location",
         "Organization",
         "Practitioner",
         "Practitioner Role",
         "Related Person",
+        "Social Care Assessment",
+        "Social Care Contact",
         "Social Care Service"
         ]
-    },*/
+    },
     /*{
         "name": "Black Pear SoFoundation Trustware",
         "region": "Regional",
@@ -247,6 +249,14 @@ const nhsDataProduction = [
         "Organization",
         "Practitioner",
         "Practitioner Role"
+        ]
+    },
+    {
+        "name": "Care Networx",
+        "region": "W8U4Y",
+        "resourcesProvided": [
+        "Flag",
+        "Documents"
         ]
     },
     {
@@ -373,7 +383,7 @@ const nhsDataProduction = [
         "resourcesProvided": [
         /*"Alergy",*/
         "Appointment",
-        "Ecounter",
+        "Encounter",
         "Episode of Care",
 		"Flag",
         "Location",
@@ -395,7 +405,7 @@ const nhsDataProduction = [
         "Appointment",
         /*"Condition"*/
         "Documents (Discharge Summary, Maternity)",
-        "Ecounter",
+        "Encounter",
         /*"Episode of Care",
         "Flag",*/
         "Location",
@@ -596,12 +606,12 @@ const nhsDataProduction = [
         "name": "Rotherham Metropolitan Borough Council",
         "region": "SY",
         "resourcesProvided": [
-		"EpisodeOfCare",
         "Location",
         "Organization",
-        "Patient",
         "Practitioner",
-        "PractitionerRole"
+        "PractitionerRole",
+        "Social Care Assessment",
+        "Social Care Service"
         ]
   },
     {
@@ -636,10 +646,14 @@ const nhsDataProduction = [
         "name": "Sheffield City Council",
         "region": "SY",
         "resourcesProvided": [
-        "Episode of Care",
+        "Flag",
         "Location",
         "Organization",
-        "Practitioner"
+        "Practitioner",
+        "Practitioner Role",
+        "Related Person",
+        "Social Care Contact",
+        "Social Care Service"
         ]
     },
     {
@@ -703,6 +717,7 @@ const nhsDataProduction = [
 		"Diagnostic Reports",
         "Documents (Discharge Summary)",
         "Encounter",
+        "Flag",
         "Location",
         "Medication Request",
         "Organization",
@@ -781,17 +796,11 @@ const nhsDataInProgress = [
         ]
     },
     {
-        "name": "Barnsley Metropolitan Borough",
+        "name": "Barnsley Metropolitan Borough Council",
         "region": "SY",
         "resourcesProvided": [
         "Appointment",
-        "Episode of Care",
         /*"Bundle",*/
-        "Location",
-        "Organization",
-        "Practitioner",
-        "Practitioner Role",
-        "Related Person"
     ]
   },
   /*{
@@ -1044,9 +1053,6 @@ const nhsDataInProgress = [
         "region": "SY",
         "resourcesProvided": [
         "Appointment",
-        "Practitioner Role",
-        "Related Person",
-        "Social Care Service"
     ]
   },
   /*{
